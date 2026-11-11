@@ -2,9 +2,12 @@ import gymnasium as gym
 import minari
 import torch
 import numpy as np
+import os
+import json
 
 class DatasetLoader():
     def __init__(self, datasetPath="mujoco/halfcheetah/medium-v0", device='cuda'):
+        self.datasetPath = datasetPath
         lowerPath = datasetPath.lower()
         self.specialDataset = None
         if any(val in lowerPath for val in ['locomotion', 'halfcheetah', 'hopper', 'walker2d']):
@@ -88,6 +91,7 @@ class DatasetLoader():
         '''
 
 
+def saveJson(data, fileName):
+    with open(os.path.join('Outputs', fileName), 'w') as f:
+        f.write(json.dumps(data, indent=2))
 
-halfCheetah = DatasetLoader()
-print(halfCheetah)

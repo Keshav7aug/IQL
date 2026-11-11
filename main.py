@@ -1,4 +1,4 @@
-from utils import DatasetLoader
+from utils import DatasetLoader, saveJson
 from agent import IQLAgent
 import torch
 import numpy as np
@@ -43,7 +43,7 @@ def train(steps=1_000_000):
         beta=3.0 if loader.specialDataset == 'locomotion' else 10.0
     )
 
-
+    trainingData = []
     for step in range(1,steps+1):
         batch = loader.samplebatch(batchSize=256)
 
@@ -53,10 +53,20 @@ def train(steps=1_000_000):
         q_loss, mean_q = agent.update_q(batch=batch)
 
 
-        if step % 10_00 == 0:
+        if step % 1_000 == 0:
             meanReturn, meanScore = evaluate(agent)
             print(f"Step {step} | V: {v_loss:.4f}, {mean_v:.4f} | Q: {q_loss:.4f}, {mean_q:.4f} | Pi: {pi_loss:.4f}, {mean_adv_wt:.4f} | Mean Score: {meanScore:.4f} | Mean Return: {meanReturn:.4f}")
+            trainingData.append({
+                'Step': step,
+                'V Loss': round(v_loss, 4),
+                'V Mean': round(mean_v, 4),
+                'Q Loss': round(q_loss, 4),
+                'Q Mean': round(mean_q, 4),
+                'Pi Loss': round(pi_loss, 4),
+                'Pi Mean': round(mean_adv_wt, 4),
+                'Mean Score': round(meanScore, 4),
+                'Mean Return': round(meanReturn, 4),
+            })
+    saveJson(trainingData, f"{loader.datasetPath.replace('/', '_')}_{steps}.json")
 
-
-
-train()
+train(steps=2000)
