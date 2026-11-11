@@ -1,0 +1,5 @@
+gymnasium[mujoco]
+minari
+minari[hf]
+minari[hdf5]
+torch
