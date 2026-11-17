@@ -34,7 +34,7 @@ def evaluate(agent: IQLAgent, nEpisodes=10):
     return meanReturn, meanScore
 
 def train(steps=1_000_000):
-    loader = DatasetLoader(device='cuda')
+    loader = DatasetLoader(datasetPath='halfcheetah_medium-v2.hdf5',device='cuda')
     agent = IQLAgent(
         loader=loader,
         lr=3e-4,
@@ -69,4 +69,4 @@ def train(steps=1_000_000):
             })
     saveJson(trainingData, f"{loader.datasetPath.replace('/', '_')}_{steps}.json")
 
-train(steps=2000)
+train()

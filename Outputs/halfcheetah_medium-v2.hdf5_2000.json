@@ -1,0 +1,24 @@
+[
+  {
+    "Step": 1000,
+    "V Loss": 0.0017,
+    "V Mean": 3.7256,
+    "Q Loss": 0.0563,
+    "Q Mean": 4.4935,
+    "Pi Loss": 4.0141,
+    "Pi Mean": 0.9795,
+    "Mean Score": 2.0089,
+    "Mean Return": -30.7713
+  },
+  {
+    "Step": 2000,
+    "V Loss": 0.0084,
+    "V Mean": 7.7753,
+    "Q Loss": 0.1595,
+    "Q Mean": 8.3973,
+    "Pi Loss": 2.3769,
+    "Pi Mean": 0.8831,
+    "Mean Score": 13.2757,
+    "Mean Return": 1368.0251
+  }
+]
