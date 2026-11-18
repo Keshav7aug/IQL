@@ -116,7 +116,7 @@ class DatasetLoader():
 
     def processObs(self, episode):
         if isinstance(episode, dict): # for antmaze
-            return np.concatenate([episode['observation'], episode['desired_goal']], axis=1)
+            return np.concatenate([episode['observation'], episode['desired_goal']], axis=-1)
         else:
             return episode
 

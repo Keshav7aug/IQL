@@ -2,6 +2,7 @@ from utils import DatasetLoader, saveJson
 from agent import IQLAgent
 import torch
 import numpy as np
+import time
 @torch.no_grad()
 def evaluate(agent: IQLAgent, nEpisodes=10):
     loader = agent.loader
@@ -33,13 +34,19 @@ def evaluate(agent: IQLAgent, nEpisodes=10):
 
     return meanReturn, meanScore
 
-def train(steps=1_000_000):
-    loader = DatasetLoader(datasetPath='halfcheetah_medium-v2.hdf5',device='cuda')
+def train(steps=1_000_000, datasetPath='halfcheetah_medium-v2.hdf5', baseline=False):
+    startTime = time.time()
+    loader = DatasetLoader(datasetPath=datasetPath,device='cuda')
+    tau = 0.7 # locomotion
+    if baseline:
+        tau = 0.5
+    elif loader.specialDataset != 'antmaze':
+        tau = 0.9
     agent = IQLAgent(
         loader=loader,
         lr=3e-4,
         gamma=0.99,
-        tau=0.7 if loader.specialDataset == 'locomotion' else 0.9,
+        tau=tau,
         beta=3.0 if loader.specialDataset == 'locomotion' else 10.0
     )
 
@@ -67,6 +74,15 @@ def train(steps=1_000_000):
                 'Mean Score': round(meanScore, 4),
                 'Mean Return': round(meanReturn, 4),
             })
-    saveJson(trainingData, f"{loader.datasetPath.replace('/', '_')}_{steps}.json")
-
-train()
+    endTime = time.time()    
+    metadata = {
+        "TotalTime": endTime-startTime
+        }
+    saveJson([metadata]+trainingData, f"{loader.datasetPath.replace('/', '_')}_{steps}_Tau{agent.tau}.json")
+datasets = ('halfcheetah_medium_replay-v2.hdf5', 'halfcheetah_medium-v2.hdf5', 'hopper_medium-v2.hdf5', 'walker2d_medium-v2.hdf5', 'mujoco/halfcheetah/medium-v0', 'mujoco/hopper/medium-v0', 'mujoco/walker2d/medium-v0', 'D4RL/antmaze/medium-play-v1', 'D4RL/antmaze/medium-diverse-v1')
+baseLines = (True, False)
+for datasetPathTest in datasets:
+    for isbaseline in baseLines:
+        print(datasetPathTest, isbaseline)
+        train(steps=1_000_000, datasetPath=datasetPathTest, baseline=isbaseline)
+# train()
